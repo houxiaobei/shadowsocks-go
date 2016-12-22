@@ -42,7 +42,7 @@ func getRequest(conn *ss.Conn, auth bool) (host string, ota bool, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("Recovered in getRequest", r)
+			log.Println("Recovered in getRequest", r)
 		}
 	}()
 
