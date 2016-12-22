@@ -39,6 +39,13 @@ const (
 var debug ss.DebugLog
 
 func getRequest(conn *ss.Conn, auth bool) (host string, ota bool, err error) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in getRequest", r)
+		}
+	}()
+
 	ss.SetReadTimeout(conn)
 
 	// buf size should at least have the same size with the largest possible
@@ -64,6 +71,11 @@ func getRequest(conn *ss.Conn, auth bool) (host string, ota bool, err error) {
 		reqStart, reqEnd = idDm0, int(idDm0+buf[idDmLen]+lenDmBase)
 	default:
 		err = fmt.Errorf("addr type %d not supported", addrType&ss.AddrMask)
+		return
+	}
+
+	if reqEnd > 270 {
+		err = fmt.Errorf("reqEnd out of range,reqEnd:%d", reqEnd)
 		return
 	}
 
